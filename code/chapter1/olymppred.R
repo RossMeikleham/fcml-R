@@ -10,7 +10,7 @@ xtbar <- mean(x * t)
 w1 = (tbar*xbar - xtbar)/(xbar*xbar - xxbar)
 w0 = tbar-w1*xbar
 
-plot(data.frame(x, t))
+plot(data.frame(x, t), col="red", pch=16)
 
 
 
