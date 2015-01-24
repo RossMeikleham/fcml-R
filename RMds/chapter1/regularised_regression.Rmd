@@ -50,46 +50,15 @@ for (i in 1:maxorder) {
 
 <h4>Loop over different values of $\lambda$</h4>
 
-```{r, eval=FALSE}
-for (lamb in c(0,0.01,0.1,1,10))
+```{r}
+for (lamb in c(0,0.01,0.1,1,10)) {
   w = solve(t(X) %*% X + lamb * diag(maxorder+1), t(X) %*% t)
   f_test = X_test %*% w
   plot(x, y, col="red", pch=16, main=bquote(paste(lambda,"=",.(lamb))))
   lines(x_test, f_test, col="blue")
+}
 ```
 
-
-```{r, include=FALSE}
-#For some reason only the last plot is plotted in a RMarkup chunk
-#so until I can find a fix, generate the graphs manually and hide
-#the code, generate this closure and call it with all values of lambda
-lambPlot <- function (lamb) {
-      w = solve(t(X) %*% X + lamb * diag(maxorder+1), t(X) %*% t)
-      f_test = X_test %*% w
-      plot(x, y, col="red", pch=16, main=bquote(paste(lambda,"=",.(lamb))))
-      lines(x_test, f_test, col="blue")
-    }
-```
-
-```{r, echo=FALSE}
-lambPlot(0)
-```
-
-```{r, echo=FALSE}
-lambPlot(0.01)
-```
-
-```{r, echo=FALSE}
-lambPlot(0.1)
-```
-
-```{r, echo=FALSE}
-lambPlot(1)
-```
-
-```{r, echo=FALSE}
-lambPlot(10)
-```
 
 <p>As $\lambda$ increases, high values in $\mathbf{w}$ are more heavily
 penalised which leads to *simpler* functions. Why do lower values correspond to
