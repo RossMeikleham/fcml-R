@@ -21,7 +21,7 @@ and a second independent test set.</p>
 ```{r}
 N <- 100
 x <- 10 * runif(N, 0, 1) - 5
-t <- 5*x**3 - x**2 + x + 150 * rnorm(N, mean=0, sd=1)
+t <- cbind(5*x**3 - x**2 + x + 150 * rnorm(N, mean=0, sd=1))
 N_test <- 200
 x_test <- seq(-5, 5, length=N_test)
 t_test <- 5*x_test**3 - x_test**2 + x_test + 150 * rnorm(N_test, mean=0, sd=1)
@@ -36,54 +36,54 @@ data before placing it into the folds.</p>
 
 ```{r}
 max_order <- 10
-X <- array(0, dim=0)
-X_test <- array(0, dim=0)
 K <- 10
 sizes <- rep(floor(N/10), K)
 sizes[length(sizes)] <- sizes[length(sizes)] + N - sum(sizes)
-c_sizes <- cbind(rep(0, length(sizes)), cumsum(sizes))
-X <- rep(1, length(x))
-X_test <- array(0, dim=0) # np.ones_like(x_test)
-cv_loss = np.zeros((K,max_order+1))
-#ind_loss = np.zeros((K,max_order+1))
-#train_loss = np.zeros((K,max_order+1))
+c_sizes <- c(0, cumsum(sizes))
+X <- cbind(rep(1, length(x)))
+X_test <- cbind(rep(1, length(x_test)))
+cv_loss <- matrix(0, nrow=K, ncol=max_order + 1)
+ind_loss <- matrix(0, nrow=K, ncol=max_order + 1)
+train_loss <- matrix(0, nrow=K, ncol=max_order + 1)
     
-#for k in range(max_order+1):
-#    for fold in range(K):
-#        X_fold = X[c_sizes[fold]:c_sizes[fold+1],:]
-#        X_train = np.delete(X,np.arange(c_sizes[fold],c_sizes[fold+1],1),0)
-#        t_fold = t[c_sizes[fold]:c_sizes[fold+1]]
-#        t_train = np.delete(t,np.arange(c_sizes[fold],c_sizes[fold+1],1),0)
-#        w = np.linalg.solve(np.dot(X_train.T,X_train),np.dot(X_train.T,t_train))
-#        fold_pred = np.dot(X_fold,w)
-#        cv_loss[fold,k] = ((fold_pred - t_fold)**2).mean()
-#        ind_pred = np.dot(X_test,w)
-#        ind_loss[fold,k] = ((ind_pred - t_test)**2).mean()
-#        train_pred = np.dot(X_train,w)
-#        train_loss[fold,k] = ((train_pred - t_train)**2).mean()
-#    X = np.hstack((X,x**(k+1)))
-#    X_test = np.hstack((X_test,x_test**(k+1)))
+for (k in 1:(max_order+1)) {
+    for (fold in 1:K) {
+        fold_slice <- c_sizes[fold]:c_sizes[fold+1]
+        rows_remove <- seq(c_sizes[fold]+1, c_sizes[fold+1], by=1)
+        
+        X_fold <- X[fold_slice,]
+        X_train <- X[-rows_remove,]
+        t_fold <- t[fold_slice,]
+        t_train <- t[-rows_remove,]
+        
+        w <- solve(t(X_train) %*% X_train, t(X_train) %*% t_train)
+        fold_pred <- X_fold %*% w
+        cv_loss[fold,k] <- mean((fold_pred - t_fold)**2)
+        ind_pred <- X_test %*% w
+        ind_loss[fold,k] <- mean((ind_pred - t_test)**2)
+        train_pred <- X_train %*% w
+        train_loss[fold,k] <- mean((train_pred - t_train)**2)
+    }
+    X <- cbind(X, x**k)
+    X_test <- cbind(X_test, x_test**k)
+}
 ```
 
 <p>Finally, we plot the mean performance in each case (where the mean is taken
 over folds).</p>
 
+```{r}
+order = seq(0, max_order, by=1)
 
-    import pylab as plt
-    %matplotlib inline
-    order = np.arange(max_order+1)
-    plt.plot(order,train_loss.mean(axis=0),'b-',label="Training loss")
-    plt.plot(order,cv_loss.mean(axis=0),'r-',label="CV loss")
-    plt.plot(order,ind_loss.mean(axis=0),'k',label="Independent test loss")
-    plt.legend()
-    plt.xlabel('Model order')
-    plt.ylabel('Mean squared loss')
+plot(order, colMeans(train_loss), type="l", col="blue", xlab="Model order", 
+     ylab="Mean squared loss", xlim=c(0,10))
 
+lines(order, colMeans(cv_loss), col="red")
+lines(order, colMeans(ind_loss), col="green")    
 
-
-
-
-
+legend('topright', pch=c(15, 15, 15), col=c("blue", "red", "green"), 
+       legend=c("Training loss", "CV loss", "Independent test loss"))
+```
 
 <p>As expected, training loss (blue) always decreaes. The CV loss doesn't, and
 comes to a minimum at around 3rd order (this will not always be the case - it
