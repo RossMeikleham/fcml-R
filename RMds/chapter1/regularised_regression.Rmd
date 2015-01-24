@@ -50,7 +50,7 @@ for (i in 1:maxorder) {
 
 <h4>Loop over different values of $\lambda$</h4>
 
-```{r}
+```{r, eval=FALSE}
 for (lamb in c(0,0.01,0.1,1,10))
   w = solve(t(X) %*% X + lamb * diag(maxorder+1), t(X) %*% t)
   f_test = X_test %*% w
