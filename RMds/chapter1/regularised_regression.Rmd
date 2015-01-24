@@ -1,0 +1,108 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+
+<h3>Regularised regression</h3>
+<p>Our original squared loss function in matrix/vector notation is:
+$$ L = \frac{1}{N}\sum_{n=1}^N (\mathbf{t} - \mathbf{X}\mathbf{w})^T(\mathbf{t}
+- \mathbf{X}\mathbf{w}) $$
+Here's another loss function:
+$$ L = \lambda \mathbf{w}^T\mathbf{w} + \frac{1}{N}\sum_{n=1}^N (\mathbf{t} -
+\mathbf{X}\mathbf{w})^T(\mathbf{t} - \mathbf{X}\mathbf{w}) $$
+Recall that we're minimising this function and so (if $\lambda>0$) this
+additional term will penalise large positive and negative values in
+$\mathbf{w}$. $\lambda$ controls how much influence this new term has over the
+original squared error term.</p>
+
+<p>Differentiating this with respect to $\mathbf{w}$ and then setting to zero
+(this is a good exercise to do) results in:
+$$ (\mathbf{X}^T\mathbf{X} + \lambda\mathbf{I})\mathbf{w} =
+\mathbf{X}^T\mathbf{t} $$
+where $\mathbf{I}$ is a square matrix with ones on the diagonal and zeros
+elsewhere (the identity matrix).</p>
+
+<p>To demonstrate the effect of this additional term, we will generate some
+synthetic data by using a quadratic function and assing some random (normal /
+Gaussian) noise.</p>
+
+```{r}
+set.seed(1) #Keep regularity in plotting results
+x <- seq(0, 10, length=10)
+y <- x**2 - 3*x + 4
+t <- y + rnorm(length(x), mean=0, sd=10)
+plot(x,t, col="red", pch=16)
+lines(x, y, col="blue")
+```
+
+
+<h4>Creating $\mathbf{X}$</h4>
+
+```{r}
+maxorder = 5
+x_test = seq(0, 10, length=30)
+X = rep(1, length(x))
+X_test = rep(1, length(x_test))
+for (i in 1:maxorder) {
+    X = cbind(X, x**i)
+    X_test = cbind(X_test, x_test**i)
+}
+```
+
+<h4>Loop over different values of $\lambda$</h4>
+
+```{r}
+for (lamb in c(0,0.01,0.1,1,10))
+  w = solve(t(X) %*% X + lamb * diag(maxorder+1), t(X) %*% t)
+  f_test = X_test %*% w
+  plot(x, y, col="red", pch=16, main=bquote(paste(lambda,"=",.(lamb))))
+  lines(x_test, f_test, col="blue")
+```
+
+
+```{r, include=FALSE}
+#For some reason only the last plot is plotted in a RMarkup chunk
+#so until I can find a fix, generate the graphs manually and hide
+#the code, generate this closure and call it with all values of lambda
+lambPlot <- function (lamb) {
+      w = solve(t(X) %*% X + lamb * diag(maxorder+1), t(X) %*% t)
+      f_test = X_test %*% w
+      plot(x, y, col="red", pch=16, main=bquote(paste(lambda,"=",.(lamb))))
+      lines(x_test, f_test, col="blue")
+    }
+```
+
+```{r, echo=FALSE}
+lambPlot(0)
+```
+
+```{r, echo=FALSE}
+lambPlot(0.01)
+```
+
+```{r, echo=FALSE}
+lambPlot(0.1)
+```
+
+```{r, echo=FALSE}
+lambPlot(1)
+```
+
+```{r, echo=FALSE}
+lambPlot(10)
+```
+
+<p>As $\lambda$ increases, high values in $\mathbf{w}$ are more heavily
+penalised which leads to *simpler* functions. Why do lower values correspond to
+simpler functions?</p>
+<p>Firstly, what does *simpler* mean?</p>
+<p>I would argue that simpler functions have smaller derivatives (first, second,
+etc) as they typically change more slowly. In our polynomials, the derivatives
+are dependent on the values of $\mathbf{w}$. In particular our polynomial is:
+$$ t = \sum_{d=0}^D w_d x^d $$
+and the first derivative is:
+$$ \frac{dt}{dx} = \sum_{d=1}^D dw_d x^{d-1} $$
+and second is:
+$$ \frac{d^2t}{dx^2} = \sum_{d=2}^D d(d-1)w_d x^{d-2} $$
+which in both cases increases with increasing values of $w_d$. So penalising
+high (positive and negative) values decreases (in general) the gradients (and
+gradients of gradients, etc).</p>
