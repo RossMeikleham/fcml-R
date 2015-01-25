@@ -13,7 +13,7 @@ t <- data$V2
 look at high orders. Satisfy yourself that this doesn't make any difference!</p>
 
 ```{r}
-    x = (x-1896)/4
+x <- (x - 1896) / 4
 ```
 
 <h4>Creating $\mathbf{X}$</h4>
@@ -21,34 +21,32 @@ look at high orders. Satisfy yourself that this doesn't make any difference!</p>
 stage</p>
 
 ```{r}
-maxorder = 5
-X = rep(1, length(x))
+maxorder <- 5
+X <- rep(1, length(x))
 for (i in 1:maxorder)
-    X = cbind(X, (x**i))
+    X <- cbind(X, (x**i))
 ```
     
 <p>Solve the system...</p>
 
 ```{r}
-    w = solve(t(X) %*% X, t(X) %*% t)
-    print(w)
-
+w <- solve(t(X) %*% X, t(X) %*% t)
+print(w)
 ```
 
 Create a test set in the same manner as $\mathbf{X}$...
 
 ```{r}
-    x_test = seq(0, 30, length=100)
-    X_test = rep(1, length(x_test))
-    for (i in 1:maxorder)
-        X_test = cbind(X_test, x_test**i)
-    f_test = X_test %*% w
+x_test <- seq(0, 30, length=100)
+X_test <- rep(1, length(x_test))
+for (i in 1:maxorder)
+    X_test <- cbind(X_test, x_test**i)
+f_test <- X_test %*% w
 ```
 
 ```{r}
-    plot(x,t, col="red", pch=16)
-    lines(x_test, f_test, col="blue")
+plot(x,t, col="red", pch=16)
+lines(x_test, f_test, col="blue")
 ```
-
 
 <p>Try playing with the maximum order and extending the test data range...</p>

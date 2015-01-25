@@ -38,24 +38,24 @@ lines(x, y, col="blue")
 <h4>Creating $\mathbf{X}$</h4>
 
 ```{r}
-maxorder = 5
-x_test = seq(0, 10, length=30)
-X = rep(1, length(x))
-X_test = rep(1, length(x_test))
+maxorder <- 5
+x_test <- seq(0, 10, length=30)
+X <- rep(1, length(x))
+X_test <- rep(1, length(x_test))
 for (i in 1:maxorder) {
-    X = cbind(X, x**i)
-    X_test = cbind(X_test, x_test**i)
+    X <- cbind(X, x**i)
+    X_test <- cbind(X_test, x_test**i)
 }
 ```
 
 <h4>Loop over different values of $\lambda$</h4>
 
 ```{r}
-for (lamb in c(0,0.01,0.1,1,10)) {
-  w = solve(t(X) %*% X + lamb * diag(maxorder+1), t(X) %*% t)
-  f_test = X_test %*% w
-  plot(x, y, col="red", pch=16, main=bquote(paste(lambda,"=",.(lamb))))
-  lines(x_test, f_test, col="blue")
+for (lamb in c(0, 0.01, 0.1, 1, 10)) {
+    w <- solve(t(X) %*% X + lamb * diag(maxorder + 1), t(X) %*% t)
+    f_test <- X_test %*% w
+    plot(x, y, col="red", pch=16, main=bquote(paste(lambda,"=",.(lamb))))
+    lines(x_test, f_test, col="blue")
 }
 ```
 

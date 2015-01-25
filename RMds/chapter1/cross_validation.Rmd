@@ -73,7 +73,7 @@ for (k in 1:(max_order+1)) {
 over folds).</p>
 
 ```{r}
-order = seq(0, max_order, by=1)
+order <- seq(0, max_order, by=1)
 
 plot(order, colMeans(train_loss), type="l", col="blue", xlab="Model order", 
      ylab="Mean squared loss", xlim=c(0,10))

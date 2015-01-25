@@ -42,8 +42,8 @@ print(xtbar)
 ```
 
 ```{r, results="hold"}
-w1 = (tbar * xbar - xtbar)/(xbar * xbar - xxbar)
-w0 = tbar- w1 * xbar
+w1 <- (tbar * xbar - xtbar)/(xbar * xbar - xxbar)
+w0 <- tbar - w1 * xbar
 print(w0)
 print(w1)
 ```
@@ -53,8 +53,8 @@ print(w1)
 <p>We can now plot the fitted model</p>
 
 ```{r, fig.width=5, fig.height=5, message=FALSE}
-x_test = seq(1896,2008,length=100)
-f_test = w0 + w1 * x_test
+x_test <- seq(1896, 2008, length=100)
+f_test <- w0 + w1 * x_test
 plot(data.frame(x, t), col="red", pch=16, 
      xlab="Olympic Year", ylab="Winning time (s)")
 lines(x_test, f_test, col="blue")
@@ -65,8 +65,8 @@ lines(x_test, f_test, col="blue")
 <p>We can now compute the prediction at 2012:</p>
 
 ```{r}
-    win_2012 = w0+w1*2012
-    print(win_2012)
+win_2012 <- w0 + w1 * 2012
+print(win_2012)
 ```
 
 <h4>Matrix and vector form</h4>
@@ -85,16 +85,16 @@ $$ \mathbf{w} = \left(\mathbf{X}^T\mathbf{X}\right)^{-1}\mathbf{X}^T\mathbf{t}
 $$
 
 ```{r}
-    X = cbind((rep(1, length(x))), x)
-    w = solve(t(X) %*% X) %*% (t(X) %*% t)
-    print(w)
+X <- cbind((rep(1, length(x))), x)
+w <- solve(t(X) %*% X) %*% (t(X) %*% t)
+print(w)
 ```
 
 ```{r, fig.width=5, fig.height=5, message=FALSE}
-    f_test = w[1,] + w[2,] * x_test
-    plot(data.frame(x, t), col="red", pch=16,
-         xlab="Olympic Year", ylab="Winning time (s)")
-    lines(x_test, f_test, col="blue")
+f_test <- w[1,] + w[2,] * x_test
+plot(data.frame(x, t), col="red", pch=16,
+     xlab="Olympic Year", ylab="Winning time (s)")
+lines(x_test, f_test, col="blue")
 ```
 
 
@@ -107,8 +107,8 @@ $\mathbf{X}^T\mathbf{X}$.</p>
 $\mathbf{A}\mathbf{z} = \mathbf{B}$ for $\mathbf{z}$.</p>
 
 ```{r}
-    w = solve(t(X) %*% X, t(X) %*% t)
-    print(w)
+w <- solve(t(X) %*% X, t(X) %*% t)
+print(w)
 ```
 
 
@@ -118,11 +118,11 @@ $\mathbf{A}\mathbf{z} = \mathbf{B}$ for $\mathbf{z}$.</p>
 $\mathbf{X}^*\mathbf{w}$.
 
 ```{r, fig.width=5, fig.height=5, message=FALSE}
-    X_test = cbind((rep(1, length(x_test))), x_test)
-    f_test = X_test %*% w
-    plot(data.frame(x, t), col="red", pch=16,
-         xlab="Olympic Year", ylab="Winning time (s)")
-    lines(x_test, f_test, col="blue")
+X_test <- cbind((rep(1, length(x_test))), x_test)
+f_test <- X_test %*% w
+plot(data.frame(x, t), col="red", pch=16,
+     xlab="Olympic Year", ylab="Winning time (s)")
+lines(x_test, f_test, col="blue")
 ```
 
 
@@ -131,7 +131,7 @@ $$ \mathbf{x}_{2012} = \left[\begin{array}{c} 1 \\ 2012 \end{array}\right] $$
 and compute the prediction at 2012 as $\mathbf{w}^T\mathbf{x}_{2012}$.</p>
 
 ```{r}
-    x_2012 = c(1, 2012)
-    f_2012 = t(w) %*% x_2012
-    print(f_2012)
+x_2012 <- c(1, 2012)
+f_2012 <- t(w) %*% x_2012
+print(f_2012)
 ```
