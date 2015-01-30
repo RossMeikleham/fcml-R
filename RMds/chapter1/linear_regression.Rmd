@@ -86,7 +86,7 @@ $$
 
 ```{r}
 X <- cbind((rep(1, length(x))), x)
-w <- solve(t(X) %*% X) %*% (t(X) %*% t)
+w <- solve(t(X) %*% X, t(X) %*% t)
 print(w)
 ```
 
