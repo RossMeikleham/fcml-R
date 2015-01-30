@@ -1,0 +1,42 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+
+<h2>Change in likelihood of training data as model order is increased</h2>
+<p>We will now see how the likelihood changes as we make the model more complex.
+To avoid numerical problems, we will first re-scale $x$.</p>
+
+```{r}
+data <- read.csv("../../data/olympic100m.txt", header=FALSE)
+x <- data$V1
+t <- data$V2
+x <- (x - x[1])/4.0
+```
+```{r}
+log_gauss_pdf <-function(x, mu, sig_sq) {     
+  const <- -0.5 * log(2.0 * pi) - 0.5 * log(sig_sq)
+  return (const - (1.0 / (2 * sig_sq)) * (x - mu)**2)
+}
+
+X <- rep(1, length(x))
+max_order <- 5
+L <- rbind(rep(1, length(max_order + 1)))
+
+for (i in 1:(max_order+1)) {
+    w <- solve(t(X) %*% X, (t(X) %*% t))
+    sig_sq <- mean((t - (X %*% w))**2)
+    
+    L[i] <- sum(log_gauss_pdf(t, X %*% w, sig_sq))
+    X <- cbind(X, x**i)
+}
+```
+<p>Plot the likelihood</p>
+
+```{r}
+plot(0:max_order, L, xlab="Polynomial order",
+             ylab="Likelihood on training data", col="blue", type="l")
+```
+
+
+<p>It can be seen from the plot that the likelihood increases as the polynomial
+order increases.</p>

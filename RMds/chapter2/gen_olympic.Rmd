@@ -17,7 +17,7 @@ the noise. We'll get the true parameter values by minimising the loss...</p>
 
 ```{r}
 X <- cbind(rep(1, length(x)), x)
-w <- solve(t(X) %*% X) %*% (t(X) %*% t)
+w <- solve(t(X) %*% X, t(X) %*% t)
 print(w)
 ```
 
@@ -29,7 +29,7 @@ mu <- 0.0
 sigma_sq <- 0.05
 ```
 
-<p>Generate the noisy t values (note that `numpy.random.normal` requires the
+<p>Generate the noisy t values (note that `rnorm` requires the
 standard deviation, not the variance)</p>
 
 ```{r}

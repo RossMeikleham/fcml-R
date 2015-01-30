@@ -45,7 +45,7 @@ f_test <- X_test %*% w
 ```
 
 ```{r}
-plot(x,t, col="red", pch=16)
+plot(x, t, col="red", pch=16)
 lines(x_test, f_test, col="blue")
 ```
 
