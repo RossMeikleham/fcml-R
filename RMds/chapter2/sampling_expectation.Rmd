@@ -10,34 +10,20 @@ To compute a sample based approximation, we will draw samples from $U(0,1)$,
 square them, and compute the average.
 </p>
 
-
-    import numpy as np
-    maxN = 1000;
-    u = np.random.rand(maxN,1)**2
-    expected_val = np.zeros((maxN-1,1))
-    for i in np.arange(maxN-1):
-        expected_val[i] = u[0:i+1].mean()
+```{r}
+maxN <- 1000
+u <- runif(maxN, 0, 1)**2
+expected_val <- rbind(rep(0, maxN-1))
+for (i in 1:(maxN-1)) {
+  expected_val[i] <- mean(u[1:i])
+}
+```
 
 <p>Plot the evolution of the expectation.</p>
 
-
-    import pylab as plt
-    %matplotlib inline
-    plt.plot(np.arange(maxN-1),expected_val)
-    plt.plot([0,maxN-1],[1.0/3.0,1.0/3.0],'k--')
-    plt.xlabel('Number of samples')
-    plt.ylabel('Expected value of $y^2$')
-
-
-
-
-    <matplotlib.text.Text at 0x10f576650>
-
-
-
-
-![png](sampling_expectation_files/sampling_expectation_3_1.png)
-
-
-
-    
+```{r}
+plot(0:(maxN-2), expected_val, xlab="Number of samples", col="red",
+      ylab="Expected value of y^2", ylim=c(0.25, 0.5), xlim=c(0,1000),
+      type="l")
+abline(h = 1/3, col="blue")
+```
